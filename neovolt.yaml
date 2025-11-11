@@ -1,0 +1,1923 @@
+#################################################################################################################################
+#
+#   Neovolt (Bytewatt BW-INV-SPB5k) Home Assistant Integration
+#   Based on Bytewatt Modbus RTU Protocol V1.12
+#   
+#   Hardware: EW11A Single Modbus RTU to TCP Converter
+#   Protocol: Modbus TCP (converted from RTU)
+#   Default Slave ID: 0x55 (85 decimal)
+#   
+#   Change History:
+#   1.0     2025-01-XX      Initial version based on Bytewatt protocol documentation
+#   1.1     2025-11-12      Sensor calculation fixes
+#
+#################################################################################################################################
+
+
+# Modbus sensor configuration
+modbus:
+  - name: neovolt_inverter
+    type: tcp
+    host: !secret neovolt_modbus_host_ip
+    port: !secret neovolt_modbus_host_port
+    message_wait_milliseconds: 10
+    timeout: 10
+    delay: 1
+
+# Definition of sensors
+    sensors:
+# Grid Meter Running Data (0x0010-0x0036)
+      - name: Neovolt Total Energy Feed to Grid
+        unique_id: neovolt_total_energy_feed_to_grid
+        slave: !secret neovolt_modbus_slaveId
+        address: 0x0010
+        data_type: uint32
+        unit_of_measurement: kWh
+        device_class: energy
+        state_class: total_increasing
+        scan_interval: 60
+        scale: 0.01
+        precision: 2
+
+      - name: Neovolt Total Energy Consume from Grid
+        unique_id: neovolt_total_energy_consume_from_grid
+        slave: !secret neovolt_modbus_slaveId
+        address: 0x0012
+        data_type: uint32
+        unit_of_measurement: kWh
+        device_class: energy
+        state_class: total_increasing
+        scan_interval: 60
+        scale: 0.01
+        precision: 2
+
+      - name: Neovolt Grid Voltage Phase A
+        unique_id: neovolt_grid_voltage_phase_a
+        slave: !secret neovolt_modbus_slaveId
+        address: 0x0014
+        data_type: uint16
+        unit_of_measurement: V
+        device_class: voltage
+        state_class: measurement
+        scan_interval: 5
+
+      - name: Neovolt Grid Voltage Phase B
+        unique_id: neovolt_grid_voltage_phase_b
+        slave: !secret neovolt_modbus_slaveId
+        address: 0x0015
+        data_type: uint16
+        unit_of_measurement: V
+        device_class: voltage
+        state_class: measurement
+        scan_interval: 5
+
+      - name: Neovolt Grid Voltage Phase C
+        unique_id: neovolt_grid_voltage_phase_c
+        slave: !secret neovolt_modbus_slaveId
+        address: 0x0016
+        data_type: uint16
+        unit_of_measurement: V
+        device_class: voltage
+        state_class: measurement
+        scan_interval: 5
+
+      - name: Neovolt Grid Current Phase A
+        unique_id: neovolt_grid_current_phase_a
+        slave: !secret neovolt_modbus_slaveId
+        address: 0x0017
+        data_type: int16
+        unit_of_measurement: A
+        device_class: current
+        state_class: measurement
+        scan_interval: 5
+        scale: 0.1
+        precision: 1
+
+      - name: Neovolt Grid Current Phase B
+        unique_id: neovolt_grid_current_phase_b
+        slave: !secret neovolt_modbus_slaveId
+        address: 0x0018
+        data_type: int16
+        unit_of_measurement: A
+        device_class: current
+        state_class: measurement
+        scan_interval: 5
+        scale: 0.1
+        precision: 1
+
+      - name: Neovolt Grid Current Phase C
+        unique_id: neovolt_grid_current_phase_c
+        slave: !secret neovolt_modbus_slaveId
+        address: 0x0019
+        data_type: int16
+        unit_of_measurement: A
+        device_class: current
+        state_class: measurement
+        scan_interval: 5
+        scale: 0.1
+        precision: 1
+
+      - name: Neovolt Grid Frequency
+        unique_id: neovolt_grid_frequency
+        slave: !secret neovolt_modbus_slaveId
+        address: 0x001A
+        data_type: uint16
+        unit_of_measurement: Hz
+        device_class: frequency
+        state_class: measurement
+        scan_interval: 30
+        scale: 0.01
+        precision: 2
+
+      - name: Neovolt Grid Active Power Phase A
+        unique_id: neovolt_grid_active_power_phase_a
+        slave: !secret neovolt_modbus_slaveId
+        address: 0x001B
+        data_type: int32
+        unit_of_measurement: W
+        device_class: power
+        state_class: measurement
+        scan_interval: 5
+
+      - name: Neovolt Grid Active Power Phase B
+        unique_id: neovolt_grid_active_power_phase_b
+        slave: !secret neovolt_modbus_slaveId
+        address: 0x001D
+        data_type: int32
+        unit_of_measurement: W
+        device_class: power
+        state_class: measurement
+        scan_interval: 5
+
+      - name: Neovolt Grid Active Power Phase C
+        unique_id: neovolt_grid_active_power_phase_c
+        slave: !secret neovolt_modbus_slaveId
+        address: 0x001F
+        data_type: int32
+        unit_of_measurement: W
+        device_class: power
+        state_class: measurement
+        scan_interval: 5
+
+      - name: Neovolt Grid Total Active Power
+        unique_id: neovolt_grid_total_active_power
+        slave: !secret neovolt_modbus_slaveId
+        address: 0x0021
+        data_type: int32
+        unit_of_measurement: W
+        device_class: power
+        state_class: measurement
+        scan_interval: 5
+
+      - name: Neovolt Grid Power Factor
+        unique_id: neovolt_grid_power_factor
+        slave: !secret neovolt_modbus_slaveId
+        address: 0x0036
+        data_type: int16
+        device_class: power_factor
+        state_class: measurement
+        scan_interval: 30
+        scale: 0.01
+        precision: 2
+
+# PV Meter Running Data (0x0090-0x00B6)
+      - name: Neovolt PV Total Energy Feed to Grid
+        unique_id: neovolt_pv_total_energy_feed_to_grid
+        slave: !secret neovolt_modbus_slaveId
+        address: 0x0090
+        data_type: uint32
+        unit_of_measurement: kWh
+        device_class: energy
+        state_class: total_increasing
+        scan_interval: 60
+        scale: 0.01
+        precision: 2
+
+      - name: Neovolt PV Voltage Phase A
+        unique_id: neovolt_pv_voltage_phase_a
+        slave: !secret neovolt_modbus_slaveId
+        address: 0x0094
+        data_type: uint16
+        unit_of_measurement: V
+        device_class: voltage
+        state_class: measurement
+        scan_interval: 5
+
+      - name: Neovolt PV Total Active Power
+        unique_id: neovolt_pv_total_active_power
+        slave: !secret neovolt_modbus_slaveId
+        address: 0x00A1
+        data_type: int32
+        unit_of_measurement: W
+        device_class: power
+        state_class: measurement
+        scan_interval: 5
+
+# Battery Data (0x0100-0x012F)
+      - name: Neovolt Battery Voltage
+        unique_id: neovolt_battery_voltage
+        slave: !secret neovolt_modbus_slaveId
+        address: 0x0100
+        data_type: uint16
+        unit_of_measurement: V
+        device_class: voltage
+        state_class: measurement
+        scan_interval: 10
+        scale: 0.1
+        precision: 1
+
+      - name: Neovolt Battery Current
+        unique_id: neovolt_battery_current
+        slave: !secret neovolt_modbus_slaveId
+        address: 0x0101
+        data_type: int16
+        unit_of_measurement: A
+        device_class: current
+        state_class: measurement
+        scan_interval: 10
+        scale: 0.1
+        precision: 1
+
+      - name: Neovolt Battery SOC
+        unique_id: neovolt_battery_soc
+        slave: !secret neovolt_modbus_slaveId
+        address: 0x0102
+        data_type: uint16
+        unit_of_measurement: "%"
+        device_class: battery
+        state_class: measurement
+        scan_interval: 10
+        scale: 0.1
+        precision: 1
+
+      - name: Neovolt Battery Status
+        unique_id: neovolt_battery_status
+        slave: !secret neovolt_modbus_slaveId
+        address: 0x0103
+        data_type: uint16
+        state_class: measurement
+        scan_interval: 10
+
+      - name: Neovolt Battery Relay Status
+        unique_id: neovolt_battery_relay_status
+        slave: !secret neovolt_modbus_slaveId
+        address: 0x0104
+        data_type: uint16
+        state_class: measurement
+        scan_interval: 10
+
+      - name: Neovolt Battery Min Cell Voltage
+        unique_id: neovolt_battery_min_cell_voltage
+        slave: !secret neovolt_modbus_slaveId
+        address: 0x0107
+        data_type: uint16
+        unit_of_measurement: V
+        device_class: voltage
+        state_class: measurement
+        scan_interval: 30
+        scale: 0.001
+        precision: 3
+
+      - name: Neovolt Battery Max Cell Voltage
+        unique_id: neovolt_battery_max_cell_voltage
+        slave: !secret neovolt_modbus_slaveId
+        address: 0x010A
+        data_type: uint16
+        unit_of_measurement: V
+        device_class: voltage
+        state_class: measurement
+        scan_interval: 30
+        scale: 0.001
+        precision: 3
+
+      - name: Neovolt Battery Min Cell Temperature
+        unique_id: neovolt_battery_min_cell_temperature
+        slave: !secret neovolt_modbus_slaveId
+        address: 0x010D
+        data_type: int16
+        unit_of_measurement: °C
+        device_class: temperature
+        state_class: measurement
+        scan_interval: 30
+        scale: 0.01
+        precision: 1
+
+      - name: Neovolt Battery Max Cell Temperature
+        unique_id: neovolt_battery_max_cell_temperature
+        slave: !secret neovolt_modbus_slaveId
+        address: 0x0110
+        data_type: int16
+        unit_of_measurement: °C
+        device_class: temperature
+        state_class: measurement
+        scan_interval: 30
+        scale: 0.01
+        precision: 1
+
+      - name: Neovolt Battery Max Charge Current
+        unique_id: neovolt_battery_max_charge_current
+        slave: !secret neovolt_modbus_slaveId
+        address: 0x0111
+        data_type: uint16
+        unit_of_measurement: A
+        device_class: current
+        state_class: measurement
+        scan_interval: 30
+        scale: 0.1
+        precision: 1
+
+      - name: Neovolt Battery Max Discharge Current
+        unique_id: neovolt_battery_max_discharge_current
+        slave: !secret neovolt_modbus_slaveId
+        address: 0x0112
+        data_type: uint16
+        unit_of_measurement: A
+        device_class: current
+        state_class: measurement
+        scan_interval: 30
+        scale: 0.1
+        precision: 1
+
+      - name: Neovolt Battery Charge Cutoff Voltage
+        unique_id: neovolt_battery_charge_cutoff_voltage
+        slave: !secret neovolt_modbus_slaveId
+        address: 0x0113
+        data_type: uint16
+        unit_of_measurement: V
+        device_class: voltage
+        state_class: measurement
+        scan_interval: 60
+        scale: 0.1
+        precision: 1
+
+      - name: Neovolt Battery Discharge Cutoff Voltage
+        unique_id: neovolt_battery_discharge_cutoff_voltage
+        slave: !secret neovolt_modbus_slaveId
+        address: 0x0114
+        data_type: uint16
+        unit_of_measurement: V
+        device_class: voltage
+        state_class: measurement
+        scan_interval: 60
+        scale: 0.1
+        precision: 1
+
+      - name: Neovolt BMU Software Version
+        unique_id: neovolt_bmu_software_version
+        slave: !secret neovolt_modbus_slaveId
+        address: 0x0115
+        data_type: uint16
+        state_class: measurement
+        scan_interval: 60
+
+      - name: Neovolt Battery Number
+        unique_id: neovolt_battery_number
+        slave: !secret neovolt_modbus_slaveId
+        address: 0x0118
+        data_type: uint16
+        state_class: measurement
+        scan_interval: 60
+
+      - name: Neovolt Battery Capacity
+        unique_id: neovolt_battery_capacity
+        slave: !secret neovolt_modbus_slaveId
+        address: 0x0119
+        data_type: uint16
+        unit_of_measurement: kWh
+        device_class: energy
+        state_class: measurement
+        scan_interval: 60
+        scale: 0.1
+        precision: 1
+
+      - name: Neovolt Battery Type
+        unique_id: neovolt_battery_type
+        slave: !secret neovolt_modbus_slaveId
+        address: 0x011A
+        data_type: uint16
+        state_class: measurement
+        scan_interval: 60
+
+      - name: Neovolt Battery SOH
+        unique_id: neovolt_battery_soh
+        slave: !secret neovolt_modbus_slaveId
+        address: 0x011B
+        data_type: uint16
+        unit_of_measurement: "%"
+        state_class: measurement
+        scan_interval: 60
+        scale: 0.1
+        precision: 1
+
+      - name: Neovolt Battery Protection Status
+        unique_id: neovolt_battery_protection_status
+        slave: !secret neovolt_modbus_slaveId
+        address: 0x011C
+        data_type: uint16
+        state_class: measurement
+        scan_interval: 10
+
+      - name: Neovolt Battery Warning
+        unique_id: neovolt_battery_warning
+        slave: !secret neovolt_modbus_slaveId
+        address: 0x011D
+        data_type: uint16
+        state_class: measurement
+        scan_interval: 10
+
+      - name: Neovolt Battery Fault
+        unique_id: neovolt_battery_fault
+        slave: !secret neovolt_modbus_slaveId
+        address: 0x011E
+        data_type: uint32
+        state_class: measurement
+        scan_interval: 10
+
+      - name: Neovolt Battery Charge Energy
+        unique_id: neovolt_battery_charge_energy
+        slave: !secret neovolt_modbus_slaveId
+        address: 0x0120
+        data_type: uint32
+        unit_of_measurement: kWh
+        device_class: energy
+        state_class: total_increasing
+        scan_interval: 60
+        scale: 0.1
+        precision: 2
+
+      - name: Neovolt Battery Discharge Energy
+        unique_id: neovolt_battery_discharge_energy
+        slave: !secret neovolt_modbus_slaveId
+        address: 0x0122
+        data_type: uint32
+        unit_of_measurement: kWh
+        device_class: energy
+        state_class: total_increasing
+        scan_interval: 60
+        scale: 0.1
+        precision: 2
+
+      - name: Neovolt Battery Energy Charge from Grid
+        unique_id: neovolt_battery_energy_charge_from_grid
+        slave: !secret neovolt_modbus_slaveId
+        address: 0x0124
+        data_type: uint32
+        unit_of_measurement: kWh
+        device_class: energy
+        state_class: total_increasing
+        scan_interval: 60
+        scale: 0.1
+        precision: 2
+
+      - name: Neovolt Battery Power
+        unique_id: neovolt_battery_power
+        slave: !secret neovolt_modbus_slaveId
+        address: 0x0126
+        data_type: int16
+        unit_of_measurement: W
+        device_class: power
+        state_class: measurement
+        scan_interval: 5
+
+      - name: Neovolt Battery Remaining Time
+        unique_id: neovolt_battery_remaining_time
+        slave: !secret neovolt_modbus_slaveId
+        address: 0x0127
+        data_type: uint16
+        unit_of_measurement: min
+        state_class: measurement
+        scan_interval: 60
+
+# Inverter Data (0x0500-0x056D)
+      - name: Neovolt Grid Rated Voltage
+        unique_id: neovolt_grid_rated_voltage
+        slave: !secret neovolt_modbus_slaveId
+        address: 0x0500
+        data_type: uint16
+        unit_of_measurement: V
+        device_class: voltage
+        state_class: measurement
+        scan_interval: 60
+        scale: 0.1
+        precision: 1
+
+      - name: Neovolt Grid Rated Frequency
+        unique_id: neovolt_grid_rated_frequency
+        slave: !secret neovolt_modbus_slaveId
+        address: 0x0501
+        data_type: uint16
+        unit_of_measurement: Hz
+        device_class: frequency
+        state_class: measurement
+        scan_interval: 60
+        scale: 0.01
+        precision: 2
+
+      - name: Neovolt Total Energy INV Output
+        unique_id: neovolt_total_energy_inv_output
+        slave: !secret neovolt_modbus_slaveId
+        address: 0x0502
+        data_type: uint32
+        unit_of_measurement: kWh
+        device_class: energy
+        state_class: total_increasing
+        scan_interval: 60
+        scale: 0.1
+        precision: 2
+
+      - name: Neovolt Total Energy INV Input
+        unique_id: neovolt_total_energy_inv_input
+        slave: !secret neovolt_modbus_slaveId
+        address: 0x0504
+        data_type: uint32
+        unit_of_measurement: kWh
+        device_class: energy
+        state_class: total_increasing
+        scan_interval: 60
+        scale: 0.1
+        precision: 2
+
+      - name: Neovolt Total Energy Battery Output
+        unique_id: neovolt_total_energy_battery_output
+        slave: !secret neovolt_modbus_slaveId
+        address: 0x0506
+        data_type: uint32
+        unit_of_measurement: kWh
+        device_class: energy
+        state_class: total_increasing
+        scan_interval: 60
+        scale: 0.1
+        precision: 2
+
+      - name: Neovolt Total Energy Battery Input
+        unique_id: neovolt_total_energy_battery_input
+        slave: !secret neovolt_modbus_slaveId
+        address: 0x0508
+        data_type: uint32
+        unit_of_measurement: kWh
+        device_class: energy
+        state_class: total_increasing
+        scan_interval: 60
+        scale: 0.1
+        precision: 2
+
+      - name: Neovolt Total PV Energy
+        unique_id: neovolt_total_pv_energy
+        slave: !secret neovolt_modbus_slaveId
+        address: 0x050A
+        data_type: uint32
+        unit_of_measurement: kWh
+        device_class: energy
+        state_class: total_increasing
+        scan_interval: 60
+        scale: 0.1
+        precision: 2
+
+      - name: Neovolt Total Run Time
+        unique_id: neovolt_total_run_time
+        slave: !secret neovolt_modbus_slaveId
+        address: 0x050C
+        data_type: uint32
+        unit_of_measurement: h
+        state_class: total_increasing
+        scan_interval: 60
+        scale: 0.1
+        precision: 1
+
+      - name: Neovolt Inverter Work Mode
+        unique_id: neovolt_inverter_work_mode
+        slave: !secret neovolt_modbus_slaveId
+        address: 0x050E
+        data_type: uint16
+        state_class: measurement
+        scan_interval: 5
+
+      - name: Neovolt Inverter Module Temperature
+        unique_id: neovolt_inverter_module_temperature
+        slave: !secret neovolt_modbus_slaveId
+        address: 0x0510
+        data_type: int16
+        unit_of_measurement: °C
+        device_class: temperature
+        state_class: measurement
+        scan_interval: 30
+        scale: 0.1
+        precision: 1
+
+      - name: Neovolt PV Boost Temperature
+        unique_id: neovolt_pv_boost_temperature
+        slave: !secret neovolt_modbus_slaveId
+        address: 0x0511
+        data_type: int16
+        unit_of_measurement: °C
+        device_class: temperature
+        state_class: measurement
+        scan_interval: 30
+        scale: 0.1
+        precision: 1
+
+      - name: Neovolt Battery Buck Boost Temperature
+        unique_id: neovolt_battery_buck_boost_temperature
+        slave: !secret neovolt_modbus_slaveId
+        address: 0x0512
+        data_type: int16
+        unit_of_measurement: °C
+        device_class: temperature
+        state_class: measurement
+        scan_interval: 30
+        scale: 0.1
+        precision: 1
+
+      - name: Neovolt Bus Voltage
+        unique_id: neovolt_bus_voltage
+        slave: !secret neovolt_modbus_slaveId
+        address: 0x0520
+        data_type: uint16
+        unit_of_measurement: V
+        device_class: voltage
+        state_class: measurement
+        scan_interval: 30
+        scale: 0.1
+        precision: 1
+
+      - name: Neovolt PV1 Voltage
+        unique_id: neovolt_pv1_voltage
+        slave: !secret neovolt_modbus_slaveId
+        address: 0x0524
+        data_type: uint16
+        unit_of_measurement: V
+        device_class: voltage
+        state_class: measurement
+        scan_interval: 10
+        scale: 0.1
+        precision: 1
+
+      - name: Neovolt PV2 Voltage
+        unique_id: neovolt_pv2_voltage
+        slave: !secret neovolt_modbus_slaveId
+        address: 0x0525
+        data_type: uint16
+        unit_of_measurement: V
+        device_class: voltage
+        state_class: measurement
+        scan_interval: 10
+        scale: 0.1
+        precision: 1
+
+      - name: Neovolt PV3 Voltage
+        unique_id: neovolt_pv3_voltage
+        slave: !secret neovolt_modbus_slaveId
+        address: 0x0526
+        data_type: uint16
+        unit_of_measurement: V
+        device_class: voltage
+        state_class: measurement
+        scan_interval: 10
+        scale: 0.1
+        precision: 1
+
+      - name: Neovolt PV1 Current
+        unique_id: neovolt_pv1_current
+        slave: !secret neovolt_modbus_slaveId
+        address: 0x0527
+        data_type: uint16
+        unit_of_measurement: A
+        device_class: current
+        state_class: measurement
+        scan_interval: 10
+        scale: 0.01
+        precision: 2
+
+      - name: Neovolt PV2 Current
+        unique_id: neovolt_pv2_current
+        slave: !secret neovolt_modbus_slaveId
+        address: 0x0528
+        data_type: uint16
+        unit_of_measurement: A
+        device_class: current
+        state_class: measurement
+        scan_interval: 10
+        scale: 0.01
+        precision: 2
+
+      - name: Neovolt PV3 Current
+        unique_id: neovolt_pv3_current
+        slave: !secret neovolt_modbus_slaveId
+        address: 0x0529
+        data_type: uint16
+        unit_of_measurement: A
+        device_class: current
+        state_class: measurement
+        scan_interval: 10
+        scale: 0.01
+        precision: 2
+
+      - name: Neovolt PV1 Power
+        unique_id: neovolt_pv1_power
+        slave: !secret neovolt_modbus_slaveId
+        address: 0x052A
+        data_type: uint16
+        unit_of_measurement: W
+        device_class: power
+        state_class: measurement
+        scan_interval: 5
+
+      - name: Neovolt PV2 Power
+        unique_id: neovolt_pv2_power
+        slave: !secret neovolt_modbus_slaveId
+        address: 0x052B
+        data_type: uint16
+        unit_of_measurement: W
+        device_class: power
+        state_class: measurement
+        scan_interval: 5
+
+      - name: Neovolt PV3 Power
+        unique_id: neovolt_pv3_power
+        slave: !secret neovolt_modbus_slaveId
+        address: 0x052C
+        data_type: uint16
+        unit_of_measurement: W
+        device_class: power
+        state_class: measurement
+        scan_interval: 5
+
+      - name: Neovolt Total PV Power
+        unique_id: neovolt_total_pv_power
+        slave: !secret neovolt_modbus_slaveId
+        address: 0x052D
+        data_type: uint16
+        unit_of_measurement: W
+        device_class: power
+        state_class: measurement
+        scan_interval: 5
+
+      - name: Neovolt Total Battery Current
+        unique_id: neovolt_total_battery_current
+        slave: !secret neovolt_modbus_slaveId
+        address: 0x0538
+        data_type: int16
+        unit_of_measurement: A
+        device_class: current
+        state_class: measurement
+        scan_interval: 5
+        scale: 0.01
+        precision: 2
+
+      - name: Neovolt Total Battery Power
+        unique_id: neovolt_total_battery_power
+        slave: !secret neovolt_modbus_slaveId
+        address: 0x053B
+        data_type: int16
+        unit_of_measurement: W
+        device_class: power
+        state_class: measurement
+        scan_interval: 5
+
+      - name: Neovolt INV Voltage R
+        unique_id: neovolt_inv_voltage_r
+        slave: !secret neovolt_modbus_slaveId
+        address: 0x053C
+        data_type: uint16
+        unit_of_measurement: V
+        device_class: voltage
+        state_class: measurement
+        scan_interval: 5
+        scale: 0.1
+        precision: 1
+
+      - name: Neovolt INV Current R
+        unique_id: neovolt_inv_current_r
+        slave: !secret neovolt_modbus_slaveId
+        address: 0x053D
+        data_type: int16
+        unit_of_measurement: A
+        device_class: current
+        state_class: measurement
+        scan_interval: 5
+        scale: 0.01
+        precision: 2
+
+      - name: Neovolt INV Voltage S
+        unique_id: neovolt_inv_voltage_s
+        slave: !secret neovolt_modbus_slaveId
+        address: 0x053E
+        data_type: uint16
+        unit_of_measurement: V
+        device_class: voltage
+        state_class: measurement
+        scan_interval: 5
+        scale: 0.1
+        precision: 1
+
+      - name: Neovolt INV Current S
+        unique_id: neovolt_inv_current_s
+        slave: !secret neovolt_modbus_slaveId
+        address: 0x053F
+        data_type: int16
+        unit_of_measurement: A
+        device_class: current
+        state_class: measurement
+        scan_interval: 5
+        scale: 0.01
+        precision: 2
+
+      - name: Neovolt INV Voltage T
+        unique_id: neovolt_inv_voltage_t
+        slave: !secret neovolt_modbus_slaveId
+        address: 0x0540
+        data_type: uint16
+        unit_of_measurement: V
+        device_class: voltage
+        state_class: measurement
+        scan_interval: 5
+        scale: 0.1
+        precision: 1
+
+      - name: Neovolt INV Current T
+        unique_id: neovolt_inv_current_t
+        slave: !secret neovolt_modbus_slaveId
+        address: 0x0541
+        data_type: int16
+        unit_of_measurement: A
+        device_class: current
+        state_class: measurement
+        scan_interval: 5
+        scale: 0.01
+        precision: 2
+
+      - name: Neovolt INV Frequency
+        unique_id: neovolt_inv_frequency
+        slave: !secret neovolt_modbus_slaveId
+        address: 0x0542
+        data_type: uint16
+        unit_of_measurement: Hz
+        device_class: frequency
+        state_class: measurement
+        scan_interval: 30
+        scale: 0.01
+        precision: 2
+
+      - name: Neovolt INV Apparent Power
+        unique_id: neovolt_inv_apparent_power
+        slave: !secret neovolt_modbus_slaveId
+        address: 0x0543
+        data_type: int32
+        unit_of_measurement: VA
+        device_class: apparent_power
+        state_class: measurement
+        scan_interval: 5
+
+      - name: Neovolt INV Active Power
+        unique_id: neovolt_inv_active_power
+        slave: !secret neovolt_modbus_slaveId
+        address: 0x0545
+        data_type: int32
+        unit_of_measurement: W
+        device_class: power
+        state_class: measurement
+        scan_interval: 5
+
+      - name: Neovolt INV Reactive Power
+        unique_id: neovolt_inv_reactive_power
+        slave: !secret neovolt_modbus_slaveId
+        address: 0x0547
+        data_type: int32
+        unit_of_measurement: VAr
+        device_class: reactive_power
+        state_class: measurement
+        scan_interval: 5
+
+      - name: Neovolt INV Power Factor
+        unique_id: neovolt_inv_power_factor
+        slave: !secret neovolt_modbus_slaveId
+        address: 0x0549
+        data_type: int16
+        device_class: power_factor
+        state_class: measurement
+        scan_interval: 30
+        scale: 0.01
+        precision: 2
+
+      - name: Neovolt Backup Voltage R
+        unique_id: neovolt_backup_voltage_r
+        slave: !secret neovolt_modbus_slaveId
+        address: 0x0551
+        data_type: uint16
+        unit_of_measurement: V
+        device_class: voltage
+        state_class: measurement
+        scan_interval: 5
+        scale: 0.1
+        precision: 1
+
+      - name: Neovolt Backup Current R
+        unique_id: neovolt_backup_current_r
+        slave: !secret neovolt_modbus_slaveId
+        address: 0x0552
+        data_type: int16
+        unit_of_measurement: A
+        device_class: current
+        state_class: measurement
+        scan_interval: 5
+        scale: 0.01
+        precision: 2
+
+      - name: Neovolt Backup Frequency
+        unique_id: neovolt_backup_frequency
+        slave: !secret neovolt_modbus_slaveId
+        address: 0x055A
+        data_type: uint16
+        unit_of_measurement: Hz
+        device_class: frequency
+        state_class: measurement
+        scan_interval: 30
+        scale: 0.01
+        precision: 2
+
+      - name: Neovolt Backup Power
+        unique_id: neovolt_backup_power
+        slave: !secret neovolt_modbus_slaveId
+        address: 0x055B
+        data_type: int32
+        unit_of_measurement: W
+        device_class: power
+        state_class: measurement
+        scan_interval: 5
+
+      - name: Neovolt Inverter Warning 1
+        unique_id: neovolt_inverter_warning_1
+        slave: !secret neovolt_modbus_slaveId
+        address: 0x055E
+        data_type: uint32
+        state_class: measurement
+        scan_interval: 10
+
+      - name: Neovolt Inverter Warning 2
+        unique_id: neovolt_inverter_warning_2
+        slave: !secret neovolt_modbus_slaveId
+        address: 0x0560
+        data_type: uint32
+        state_class: measurement
+        scan_interval: 10
+
+      - name: Neovolt Inverter Fault 1
+        unique_id: neovolt_inverter_fault_1
+        slave: !secret neovolt_modbus_slaveId
+        address: 0x0562
+        data_type: uint32
+        state_class: measurement
+        scan_interval: 10
+
+      - name: Neovolt Inverter Fault 2
+        unique_id: neovolt_inverter_fault_2
+        slave: !secret neovolt_modbus_slaveId
+        address: 0x0564
+        data_type: uint32
+        state_class: measurement
+        scan_interval: 10
+
+      - name: Neovolt Inverter Fault 3
+        unique_id: neovolt_inverter_fault_3
+        slave: !secret neovolt_modbus_slaveId
+        address: 0x0566
+        data_type: uint32
+        state_class: measurement
+        scan_interval: 10
+
+# System Information (0x0740-0x074F)
+      - name: Neovolt System Time YYMM
+        unique_id: neovolt_system_time_yymm
+        slave: !secret neovolt_modbus_slaveId
+        address: 0x0740
+        data_type: uint16
+        state_class: measurement
+        scan_interval: 60
+
+      - name: Neovolt System Time DDHH
+        unique_id: neovolt_system_time_ddhh
+        slave: !secret neovolt_modbus_slaveId
+        address: 0x0741
+        data_type: uint16
+        state_class: measurement
+        scan_interval: 60
+
+      - name: Neovolt System Time MMSS
+        unique_id: neovolt_system_time_mmss
+        slave: !secret neovolt_modbus_slaveId
+        address: 0x0742
+        data_type: uint16
+        state_class: measurement
+        scan_interval: 60
+
+      - name: Neovolt EMS SN
+        unique_id: neovolt_ems_sn
+        slave: !secret neovolt_modbus_slaveId
+        address: 0x0743
+        data_type: string
+        count: 8
+        scan_interval: 60
+
+      - name: Neovolt EMS Version High
+        unique_id: neovolt_ems_version_high
+        slave: !secret neovolt_modbus_slaveId
+        address: 0x074B
+        data_type: uint16
+        state_class: measurement
+        scan_interval: 60
+
+      - name: Neovolt EMS Version Middle
+        unique_id: neovolt_ems_version_middle
+        slave: !secret neovolt_modbus_slaveId
+        address: 0x074C
+        data_type: uint16
+        state_class: measurement
+        scan_interval: 60
+
+      - name: Neovolt EMS Version Low
+        unique_id: neovolt_ems_version_low
+        slave: !secret neovolt_modbus_slaveId
+        address: 0x074D
+        data_type: uint16
+        state_class: measurement
+        scan_interval: 60
+
+# System Configuration (0x0800-0x0812)
+      - name: Neovolt Max Feed to Grid Percent
+        unique_id: neovolt_max_feed_to_grid_percent
+        slave: !secret neovolt_modbus_slaveId
+        address: 0x0800
+        data_type: uint16
+        unit_of_measurement: "%"
+        state_class: measurement
+        scan_interval: 30
+
+      - name: Neovolt PV Capacity Storage
+        unique_id: neovolt_pv_capacity_storage
+        slave: !secret neovolt_modbus_slaveId
+        address: 0x0801
+        data_type: uint32
+        unit_of_measurement: W
+        state_class: measurement
+        scan_interval: 60
+
+      - name: Neovolt PV Capacity Grid Inverter
+        unique_id: neovolt_pv_capacity_grid_inverter
+        slave: !secret neovolt_modbus_slaveId
+        address: 0x0803
+        data_type: uint32
+        unit_of_measurement: W
+        state_class: measurement
+        scan_interval: 60
+
+      - name: Neovolt System Mode
+        unique_id: neovolt_system_mode
+        slave: !secret neovolt_modbus_slaveId
+        address: 0x0805
+        data_type: uint16
+        state_class: measurement
+        scan_interval: 30
+
+      - name: Neovolt Battery Ready
+        unique_id: neovolt_battery_ready
+        slave: !secret neovolt_modbus_slaveId
+        address: 0x0807
+        data_type: uint16
+        state_class: measurement
+        scan_interval: 30
+
+# Time Period Control (0x084F-0x0862)
+      - name: Neovolt Time Period Control Flag
+        unique_id: neovolt_time_period_control_flag
+        slave: !secret neovolt_modbus_slaveId
+        address: 0x084F
+        data_type: uint16
+        state_class: measurement
+        scan_interval: 30
+
+      - name: Neovolt UPS Reserve SOC
+        unique_id: neovolt_ups_reserve_soc
+        slave: !secret neovolt_modbus_slaveId
+        address: 0x0850
+        data_type: uint16
+        unit_of_measurement: "%"
+        state_class: measurement
+        scan_interval: 30
+
+      - name: Neovolt Discharge Start Time 1 Hours
+        unique_id: neovolt_discharge_start_time_1_hours
+        slave: !secret neovolt_modbus_slaveId
+        address: 0x0851
+        data_type: uint16
+        unit_of_measurement: h
+        state_class: measurement
+        scan_interval: 60
+
+      - name: Neovolt Discharge Stop Time 1 Hours
+        unique_id: neovolt_discharge_stop_time_1_hours
+        slave: !secret neovolt_modbus_slaveId
+        address: 0x0852
+        data_type: uint16
+        unit_of_measurement: h
+        state_class: measurement
+        scan_interval: 60
+
+      - name: Neovolt Charge Cut SOC
+        unique_id: neovolt_charge_cut_soc
+        slave: !secret neovolt_modbus_slaveId
+        address: 0x0855
+        data_type: uint16
+        unit_of_measurement: "%"
+        state_class: measurement
+        scan_interval: 30
+
+      - name: Neovolt Charge Start Time 1 Hours
+        unique_id: neovolt_charge_start_time_1_hours
+        slave: !secret neovolt_modbus_slaveId
+        address: 0x0856
+        data_type: uint16
+        unit_of_measurement: h
+        state_class: measurement
+        scan_interval: 60
+
+      - name: Neovolt Charge Stop Time 1 Hours
+        unique_id: neovolt_charge_stop_time_1_hours
+        slave: !secret neovolt_modbus_slaveId
+        address: 0x0857
+        data_type: uint16
+        unit_of_measurement: h
+        state_class: measurement
+        scan_interval: 60
+
+      - name: Neovolt UPS Reserve Enable
+        unique_id: neovolt_ups_reserve_enable
+        slave: !secret neovolt_modbus_slaveId
+        address: 0x0862
+        data_type: uint16
+        state_class: measurement
+        scan_interval: 30
+
+# System Running Data (0x08D0-0x08D5)
+      - name: Neovolt System Fault
+        unique_id: neovolt_system_fault
+        slave: !secret neovolt_modbus_slaveId
+        address: 0x08D4
+        data_type: uint32
+        state_class: measurement
+        scan_interval: 10
+
+# Safety Configuration (0x1000)
+      - name: Neovolt Grid Regulation
+        unique_id: neovolt_grid_regulation
+        slave: !secret neovolt_modbus_slaveId
+        address: 0x1000
+        data_type: uint16
+        state_class: measurement
+        scan_interval: 60
+
+# Dispatch Control Registers (0x0880-0x0889) - CRITICAL FOR FORCE CHARGE/DISCHARGE
+      - name: Neovolt Dispatch Start
+        unique_id: neovolt_dispatch_start
+        slave: !secret neovolt_modbus_slaveId
+        address: 0x0880
+        data_type: uint16
+        state_class: measurement
+        scan_interval: 5
+
+      - name: Neovolt Dispatch Active Power
+        unique_id: neovolt_dispatch_active_power
+        slave: !secret neovolt_modbus_slaveId
+        address: 0x0881
+        data_type: uint32
+        unit_of_measurement: W
+        state_class: measurement
+        scan_interval: 5
+        offset: -32000
+
+      - name: Neovolt Dispatch Mode
+        unique_id: neovolt_dispatch_mode
+        slave: !secret neovolt_modbus_slaveId
+        address: 0x0885
+        data_type: uint16
+        state_class: measurement
+        scan_interval: 5
+
+      - name: Neovolt Dispatch SOC
+        unique_id: neovolt_dispatch_soc
+        slave: !secret neovolt_modbus_slaveId
+        address: 0x0886
+        data_type: uint16
+        unit_of_measurement: "%"
+        state_class: measurement
+        scan_interval: 5
+        scale: 0.392
+        precision: 1
+
+      - name: Neovolt Dispatch Time
+        unique_id: neovolt_dispatch_time
+        slave: !secret neovolt_modbus_slaveId
+        address: 0x0887
+        data_type: uint32
+        unit_of_measurement: s
+        state_class: measurement
+        scan_interval: 5
+
+#-------------------------------------------------------------------------------------------------------------------------------#
+
+# Helpers
+input_boolean:
+  neovolt_helper_force_charging:
+    name: Neovolt Force Charging
+    icon: mdi:battery-charging
+    initial: off
+
+  neovolt_helper_force_discharging:
+    name: Neovolt Force Discharging
+    icon: mdi:battery-arrow-down
+    initial: off
+
+input_button:
+  neovolt_helper_dispatch_reset:
+    name: Neovolt Dispatch Reset
+    icon: mdi:restart
+
+input_number:
+  neovolt_helper_charging_cutoff_soc:
+    name: Neovolt Charging Cutoff SOC
+    min: 10
+    max: 100
+    icon: mdi:percent-box-outline
+    unit_of_measurement: "%"
+    mode: slider
+    step: 1
+
+  neovolt_helper_discharging_cutoff_soc:
+    name: Neovolt Discharging Cutoff SOC
+    min: 4
+    max: 100
+    icon: mdi:percent-box-outline
+    unit_of_measurement: "%"
+    mode: slider
+    step: 1
+
+  neovolt_helper_max_feed_to_grid:
+    name: Neovolt Max Feed to Grid
+    min: 0
+    max: 100
+    icon: mdi:percent-box-outline
+    unit_of_measurement: "%"
+    mode: slider
+    step: 1
+
+  # Force Charging Settings
+  neovolt_helper_force_charging_power:
+    name: Neovolt Force Charging Power
+    min: 0
+    max: 5
+    icon: mdi:flash
+    unit_of_measurement: "kW"
+    mode: slider
+    step: 0.1
+
+  neovolt_helper_force_charging_duration:
+    name: Neovolt Force Charging Duration
+    min: 0
+    max: 480
+    icon: mdi:clock-time-eight-outline
+    unit_of_measurement: "min"
+    mode: slider
+    step: 5
+
+  # Force Discharging Settings
+  neovolt_helper_force_discharging_power:
+    name: Neovolt Force Discharging Power
+    min: 0
+    max: 5
+    icon: mdi:flash
+    unit_of_measurement: "kW"
+    mode: slider
+    step: 0.1
+
+  neovolt_helper_force_discharging_duration:
+    name: Neovolt Force Discharging Duration
+    min: 0
+    max: 480
+    icon: mdi:clock-time-eight-outline
+    unit_of_measurement: "min"
+    mode: slider
+    step: 5
+
+input_datetime:
+  neovolt_helper_charging_start_time:
+    name: Neovolt Charging Start Time
+    icon: mdi:clock-time-eight-outline
+    has_date: false
+    has_time: true
+
+  neovolt_helper_charging_stop_time:
+    name: Neovolt Charging Stop Time
+    icon: mdi:clock-time-eleven-outline
+    has_date: false
+    has_time: true
+
+  neovolt_helper_discharging_start_time:
+    name: Neovolt Discharging Start Time
+    icon: mdi:clock-time-eight-outline
+    has_date: false
+    has_time: true
+
+  neovolt_helper_discharging_stop_time:
+    name: Neovolt Discharging Stop Time
+    icon: mdi:clock-time-eleven-outline
+    has_date: false
+    has_time: true
+
+input_select:
+  neovolt_helper_time_period_control:
+    name: Neovolt Time Period Control
+    options:
+      - "Disable"
+      - "Enable Charge Time Period Control"
+      - "Enable Discharge Time Period Control"
+      - "Enable Time Period Control"
+
+  neovolt_helper_work_mode:
+    name: Neovolt Work Mode
+    options:
+      - "Wait Mode (0)"
+      - "Self Test (1)"
+      - "Check Mode (2)"
+      - "Normal Mode (3)"
+      - "UPS (4)"
+      - "Bypass Mode (5)"
+      - "DC Mode (6)"
+      - "Fault Mode (7)"
+
+#-------------------------------------------------------------------------------------------------------------------------------#
+
+# Automations
+automation:
+# --- START FORCE CHARGING AUTOMATIONS ---
+# Set Force Charging
+  - id: "neovolt_force_charging"
+    alias: Neovolt Force Charging
+    triggers:
+      - trigger: state
+        entity_id:
+          - input_boolean.neovolt_helper_force_charging
+        to: "on"
+    actions:
+      # Turn off other modes first
+      - if:
+          - condition: state
+            entity_id: input_boolean.neovolt_helper_force_discharging
+            state: "on"
+        then:
+          - action: input_boolean.turn_off
+            entity_id: input_boolean.neovolt_helper_force_discharging
+          - delay:
+              seconds: 2
+      
+      # Write Dispatch registers for Force Charging
+      - action: modbus.write_register
+        data:
+          hub: neovolt_inverter
+          address: 0x0880 # Dispatch Starting Register
+          slave: !secret neovolt_modbus_slaveId
+          value:
+            - 1   # Dispatch Start
+            - 0   # Dispatch Active Power High byte (32000 Offset)
+            - "{{ 32000 - ((states('input_number.neovolt_helper_force_charging_power')|float * 1000)|int) }}"
+            - 0   # Dispatch Reactive Power (not used, set to 32000)
+            - 32000
+            - 2   # Dispatch Mode (2 = State of Charge Control)
+            - 255 # Dispatch SOC (255 = ~100% with 0.392 scale)
+            - 0   # Dispatch Time High byte
+            - "{{ (states('input_number.neovolt_helper_force_charging_duration')|int) * 60 }}"
+    mode: single
+
+# Update Force Charging Power
+  - id: "neovolt_update_force_charging_power"
+    alias: Neovolt Update Force Charging Power
+    triggers:
+      - trigger: state
+        entity_id:
+          - input_number.neovolt_helper_force_charging_power
+    conditions:
+      - condition: state
+        entity_id: input_boolean.neovolt_helper_force_charging
+        state: "on"
+    actions:
+      - action: modbus.write_register
+        data:
+          hub: neovolt_inverter
+          address: 0x0881 # Dispatch Active Power
+          slave: !secret neovolt_modbus_slaveId
+          value:
+            - 0
+            - "{{ 32000 - ((states('input_number.neovolt_helper_force_charging_power')|float * 1000)|int) }}"
+    mode: single
+
+# Update Force Charging Duration
+  - id: "neovolt_update_force_charging_duration"
+    alias: Neovolt Update Force Charging Duration
+    triggers:
+      - trigger: state
+        entity_id:
+          - input_number.neovolt_helper_force_charging_duration
+    conditions:
+      - condition: state
+        entity_id: input_boolean.neovolt_helper_force_charging
+        state: "on"
+    actions:
+      - action: modbus.write_register
+        data:
+          hub: neovolt_inverter
+          address: 0x0887 # Dispatch Time
+          slave: !secret neovolt_modbus_slaveId
+          value:
+            - 0
+            - "{{ (states('input_number.neovolt_helper_force_charging_duration')|int) * 60 }}"
+    mode: single
+# --- END FORCE CHARGING AUTOMATIONS ---
+
+# --- START FORCE DISCHARGING AUTOMATIONS ---
+# Set Force Discharging
+  - id: "neovolt_force_discharging"
+    alias: Neovolt Force Discharging
+    triggers:
+      - trigger: state
+        entity_id:
+          - input_boolean.neovolt_helper_force_discharging
+        to: "on"
+    actions:
+      # Turn off other modes first
+      - if:
+          - condition: state
+            entity_id: input_boolean.neovolt_helper_force_charging
+            state: "on"
+        then:
+          - action: input_boolean.turn_off
+            entity_id: input_boolean.neovolt_helper_force_charging
+          - delay:
+              seconds: 2
+      
+      # Write Dispatch registers for Force Discharging
+      - action: modbus.write_register
+        data:
+          hub: neovolt_inverter
+          address: 0x0880 # Dispatch Starting Register
+          slave: !secret neovolt_modbus_slaveId
+          value:
+            - 1   # Dispatch Start
+            - 0   # Dispatch Active Power High byte (32000 Offset)
+            - "{{ 32000 + ((states('input_number.neovolt_helper_force_discharging_power')|float * 1000)|int) }}"
+            - 0   # Dispatch Reactive Power (not used, set to 32000)
+            - 32000
+            - 2   # Dispatch Mode (2 = State of Charge Control)
+            - "{{ (states('input_number.neovolt_helper_discharging_cutoff_soc')|int / 0.392) |int }}"
+            - 0   # Dispatch Time High byte
+            - "{{ (states('input_number.neovolt_helper_force_discharging_duration')|int) * 60 }}"
+    mode: single
+
+# Update Force Discharging Power
+  - id: "neovolt_update_force_discharging_power"
+    alias: Neovolt Update Force Discharging Power
+    triggers:
+      - trigger: state
+        entity_id:
+          - input_number.neovolt_helper_force_discharging_power
+    conditions:
+      - condition: state
+        entity_id: input_boolean.neovolt_helper_force_discharging
+        state: "on"
+    actions:
+      - action: modbus.write_register
+        data:
+          hub: neovolt_inverter
+          address: 0x0881 # Dispatch Active Power
+          slave: !secret neovolt_modbus_slaveId
+          value:
+            - 0
+            - "{{ 32000 + ((states('input_number.neovolt_helper_force_discharging_power')|float * 1000)|int) }}"
+    mode: single
+
+# Update Force Discharging Duration
+  - id: "neovolt_update_force_discharging_duration"
+    alias: Neovolt Update Force Discharging Duration
+    triggers:
+      - trigger: state
+        entity_id:
+          - input_number.neovolt_helper_force_discharging_duration
+    conditions:
+      - condition: state
+        entity_id: input_boolean.neovolt_helper_force_discharging
+        state: "on"
+    actions:
+      - action: modbus.write_register
+        data:
+          hub: neovolt_inverter
+          address: 0x0887 # Dispatch Time
+          slave: !secret neovolt_modbus_slaveId
+          value:
+            - 0
+            - "{{ (states('input_number.neovolt_helper_force_discharging_duration')|int) * 60 }}"
+    mode: single
+
+# Update Force Discharging Cutoff SOC
+  - id: "neovolt_update_force_discharging_cutoff_soc"
+    alias: Neovolt Update Force Discharging Cutoff SOC
+    triggers:
+      - trigger: state
+        entity_id:
+          - input_number.neovolt_helper_discharging_cutoff_soc
+    conditions:
+      - condition: state
+        entity_id: input_boolean.neovolt_helper_force_discharging
+        state: "on"
+    actions:
+      - action: modbus.write_register
+        data:
+          hub: neovolt_inverter
+          address: 0x0886 # Dispatch SOC
+          slave: !secret neovolt_modbus_slaveId
+          value:
+            - "{{ (states('input_number.neovolt_helper_discharging_cutoff_soc')|int / 0.392) |int }}"
+    mode: single
+# --- END FORCE DISCHARGING AUTOMATIONS ---
+
+# --- START DISPATCH RESET AUTOMATIONS ---
+# Reset Dispatch when toggles turned off
+  - id: "neovolt_dispatch_reset"
+    alias: Neovolt Dispatch Reset
+    triggers:
+      - trigger: state
+        entity_id:
+          - input_boolean.neovolt_helper_force_charging
+        to: "off"
+      - trigger: state
+        entity_id:
+          - input_boolean.neovolt_helper_force_discharging
+        to: "off"
+      - trigger: state
+        entity_id:
+          - input_button.neovolt_helper_dispatch_reset
+    actions:
+      - action: modbus.write_register
+        data:
+          hub: neovolt_inverter
+          address: 0x0880 # Dispatch Starting Register
+          slave: !secret neovolt_modbus_slaveId
+          value:
+            - 0     # Dispatch Start = 0 (Stop)
+            - 0     # Dispatch Active Power = 32000 (neutral)
+            - 32000
+            - 0     # Dispatch Reactive Power = 32000 (neutral)
+            - 32000
+            - 0     # Dispatch Mode = 0
+            - 0     # Dispatch SOC = 0
+            - 0     # Dispatch Time = 90 seconds
+            - 90
+    mode: single
+# --- END DISPATCH RESET AUTOMATIONS ---
+
+# Set Max Feed to Grid
+  - id: "neovolt_max_feed_to_grid"
+    alias: Neovolt Max Feed to Grid
+    triggers:
+      - trigger: state
+        entity_id:
+          - input_number.neovolt_helper_max_feed_to_grid
+    actions:
+      - action: modbus.write_register
+        data:
+          hub: neovolt_inverter
+          address: 0x0800
+          slave: !secret neovolt_modbus_slaveId
+          value:
+            - "{{ (states('input_number.neovolt_helper_max_feed_to_grid')|int) }}"
+    mode: single
+
+# Update Max Feed to Grid Slider
+  - id: "neovolt_update_max_feed_to_grid_slider"
+    alias: "Neovolt Update Max Feed to Grid Slider"
+    triggers:
+      - trigger: state
+        entity_id:
+          - sensor.neovolt_max_feed_to_grid_percent
+    conditions:
+      - condition: not
+        conditions:
+          - condition: state
+            entity_id: sensor.neovolt_max_feed_to_grid_percent
+            state: 'unavailable'
+    actions:
+      - action: input_number.set_value
+        target:
+          entity_id: input_number.neovolt_helper_max_feed_to_grid
+        data:
+          value: "{{ (states('sensor.neovolt_max_feed_to_grid_percent')|int) }}"
+
+# Set Charging Cutoff SOC
+  - id: "neovolt_charging_cutoff_soc"
+    alias: Neovolt Charging Cutoff SOC
+    triggers:
+      - trigger: state
+        entity_id:
+          - input_number.neovolt_helper_charging_cutoff_soc
+    actions:
+      - action: modbus.write_register
+        data:
+          hub: neovolt_inverter
+          address: 0x0855
+          slave: !secret neovolt_modbus_slaveId
+          value:
+            - "{{ (states('input_number.neovolt_helper_charging_cutoff_soc')|int) }}"
+    mode: single
+
+# Update Charging Cutoff SOC Slider
+  - id: "neovolt_update_charging_cutoff_soc_slider"
+    alias: "Neovolt Update Charging Cutoff SOC Slider"
+    triggers:
+      - trigger: state
+        entity_id:
+          - sensor.neovolt_charge_cut_soc
+    conditions:
+      - condition: not
+        conditions:
+          - condition: state
+            entity_id: sensor.neovolt_charge_cut_soc
+            state: 'unavailable'
+    actions:
+      - action: input_number.set_value
+        target:
+          entity_id: input_number.neovolt_helper_charging_cutoff_soc
+        data:
+          value: "{{ (states('sensor.neovolt_charge_cut_soc')|int) }}"
+
+# Set Discharging Cutoff SOC
+  - id: "neovolt_discharging_cutoff_soc"
+    alias: Neovolt Discharging Cutoff SOC
+    triggers:
+      - trigger: state
+        entity_id:
+          - input_number.neovolt_helper_discharging_cutoff_soc
+    actions:
+      - action: modbus.write_register
+        data:
+          hub: neovolt_inverter
+          address: 0x0850
+          slave: !secret neovolt_modbus_slaveId
+          value:
+            - "{{ (states('input_number.neovolt_helper_discharging_cutoff_soc')|int) }}"
+    mode: single
+
+# Update Discharging Cutoff SOC Slider
+  - id: "neovolt_update_discharging_cutoff_soc_slider"
+    alias: "Neovolt Update Discharging Cutoff SOC Slider"
+    triggers:
+      - trigger: state
+        entity_id:
+          - sensor.neovolt_ups_reserve_soc
+    conditions:
+      - condition: not
+        conditions:
+          - condition: state
+            entity_id: sensor.neovolt_ups_reserve_soc
+            state: 'unavailable'
+    actions:
+      - action: input_number.set_value
+        target:
+          entity_id: input_number.neovolt_helper_discharging_cutoff_soc
+        data:
+          value: "{{ (states('sensor.neovolt_ups_reserve_soc')|int) }}"
+
+# Set Time Period Control
+  - id: "neovolt_time_period_control"
+    alias: Neovolt Time Period Control
+    triggers:
+      - trigger: state
+        entity_id:
+          - input_select.neovolt_helper_time_period_control
+    actions:
+      - action: modbus.write_register
+        data:
+          hub: neovolt_inverter
+          address: 0x084F
+          slave: !secret neovolt_modbus_slaveId
+          value:
+            - >
+              {% if states('input_select.neovolt_helper_time_period_control') == "Disable" %}
+                0
+              {% elif states('input_select.neovolt_helper_time_period_control') == "Enable Charge Time Period Control" %}
+                1
+              {% elif states('input_select.neovolt_helper_time_period_control') == "Enable Discharge Time Period Control" %}
+                2
+              {% elif states('input_select.neovolt_helper_time_period_control') == "Enable Time Period Control" %}
+                3
+              {% endif %}
+    mode: single
+
+# Set Charging Times
+  - id: "neovolt_charging_times"
+    alias: Neovolt Charging Times
+    triggers:
+      - trigger: state
+        entity_id:
+          - input_datetime.neovolt_helper_charging_start_time
+      - trigger: state
+        entity_id:
+          - input_datetime.neovolt_helper_charging_stop_time
+    actions:
+      - action: modbus.write_register
+        data:
+          hub: neovolt_inverter
+          address: 0x0856
+          slave: !secret neovolt_modbus_slaveId
+          value:
+            - "{{ state_attr('input_datetime.neovolt_helper_charging_start_time', 'hour') }}"
+      - action: modbus.write_register
+        data:
+          hub: neovolt_inverter
+          address: 0x0857
+          slave: !secret neovolt_modbus_slaveId
+          value:
+            - "{{ state_attr('input_datetime.neovolt_helper_charging_stop_time', 'hour') }}"
+    mode: restart
+
+# Set Discharging Times
+  - id: "neovolt_discharging_times"
+    alias: Neovolt Discharging Times
+    triggers:
+      - trigger: state
+        entity_id:
+          - input_datetime.neovolt_helper_discharging_start_time
+      - trigger: state
+        entity_id:
+          - input_datetime.neovolt_helper_discharging_stop_time
+    actions:
+      - action: modbus.write_register
+        data:
+          hub: neovolt_inverter
+          address: 0x0851
+          slave: !secret neovolt_modbus_slaveId
+          value:
+            - "{{ state_attr('input_datetime.neovolt_helper_discharging_start_time', 'hour') }}"
+      - action: modbus.write_register
+        data:
+          hub: neovolt_inverter
+          address: 0x0852
+          slave: !secret neovolt_modbus_slaveId
+          value:
+            - "{{ state_attr('input_datetime.neovolt_helper_discharging_stop_time', 'hour') }}"
+    mode: restart
+
+#-------------------------------------------------------------------------------------------------------------------------------#
+
+# Sensor templates
+template:
+  - sensor:
+# Total House Load (Using Method 5 - Filtered Energy Balance)
+    - name: Neovolt Total House Load
+      unique_id: neovolt_total_house_load
+      unit_of_measurement: W
+      device_class: power
+      state_class: measurement
+      state: "{{ [0, (states('sensor.neovolt_pv_total_active_power')|int(0) + states('sensor.neovolt_battery_power')|int(0) + states('sensor.neovolt_grid_total_active_power')|int(0))|int]|max }}"
+      availability: "{{ not 'unavailable' in [ states('sensor.neovolt_pv_total_active_power'), states('sensor.neovolt_battery_power'), states('sensor.neovolt_grid_total_active_power') ] }}"
+
+# Current PV Production (Using PV Meter Total Active Power)
+    - name: Neovolt Current PV Production
+      unique_id: neovolt_current_pv_production
+      unit_of_measurement: W
+      device_class: power
+      state_class: measurement
+      state: "{{ states('sensor.neovolt_pv_total_active_power')|int(0) }}"
+      availability: "{{ states('sensor.neovolt_pv_total_active_power') != 'unavailable' }}"
+
+# Current PV Production DC (Sum of all strings from inverter)
+    - name: Neovolt PV Strings Total
+      unique_id: neovolt_pv_strings_total
+      unit_of_measurement: W
+      device_class: power
+      state_class: measurement
+      state: "{{ (states('sensor.neovolt_pv1_power')|int + states('sensor.neovolt_pv2_power')|int + states('sensor.neovolt_pv3_power')|int)|int }}"
+      availability: "{{ not 'unavailable' in [ states('sensor.neovolt_pv1_power'), states('sensor.neovolt_pv2_power'), states('sensor.neovolt_pv3_power') ] }}"
+
+# Total PV Production (Hybrid: DC-coupled + AC-coupled)
+    - name: Neovolt Total PV Production Hybrid
+      unique_id: neovolt_total_pv_production_hybrid
+      unit_of_measurement: W
+      device_class: power
+      state_class: measurement
+      state: "{{ (states('sensor.neovolt_total_pv_power')|int(0) + states('sensor.neovolt_pv_total_active_power')|int(0))|int }}"
+      availability: "{{ not 'unavailable' in [ states('sensor.neovolt_total_pv_power'), states('sensor.neovolt_pv_total_active_power') ] }}"
+
+# Total PV Energy (Hybrid: DC-coupled + AC-coupled)
+    - name: Neovolt Total PV Energy Hybrid
+      unique_id: neovolt_total_pv_energy_hybrid
+      unit_of_measurement: kWh
+      device_class: energy
+      state_class: total_increasing
+      state: "{{ (states('sensor.neovolt_total_pv_energy')|float(0) + states('sensor.neovolt_pv_total_energy_feed_to_grid')|float(0))|round(2) }}"
+      availability: "{{ not 'unavailable' in [ states('sensor.neovolt_total_pv_energy'), states('sensor.neovolt_pv_total_energy_feed_to_grid') ] }}"
+
+# Work Mode Description
+    - name: Neovolt Work Mode Description
+      unique_id: neovolt_work_mode_description
+      state: >
+        {% set mode = states('sensor.neovolt_inverter_work_mode')|int(0) %}
+        {% if mode == 0 %}Wait Mode
+        {% elif mode == 1 %}Self Test
+        {% elif mode == 2 %}Check Mode
+        {% elif mode == 3 %}Normal Mode
+        {% elif mode == 4 %}UPS
+        {% elif mode == 5 %}Bypass Mode
+        {% elif mode == 6 %}DC Mode
+        {% elif mode == 7 %}Fault Mode
+        {% elif mode == 8 %}Update Master Mode
+        {% elif mode == 9 %}Update Slave Mode
+        {% elif mode == 10 %}Update ARM Mode
+        {% else %}Unknown
+        {% endif %}
+      availability: "{{ states('sensor.neovolt_inverter_work_mode') }}"
+
+# Battery Status Description
+    - name: Neovolt Battery Status Description
+      unique_id: neovolt_battery_status_description
+      state: >
+        {% set status = states('sensor.neovolt_battery_status')|int(0) %}
+        {% if status == 0 %}Idle
+        {% elif status == 1 %}Discharging Only
+        {% elif status == 256 %}Charging Only
+        {% elif status == 257 %}Charging and Discharging
+        {% elif status == 512 %}Reserved
+        {% elif status == 513 %}Reserved
+        {% else %}Unknown
+        {% endif %}
+      availability: "{{ states('sensor.neovolt_battery_status') }}"
+
+# Battery Relay Status Description
+    - name: Neovolt Battery Relay Status Description
+      unique_id: neovolt_battery_relay_status_description
+      state: >
+        {% set status = states('sensor.neovolt_battery_relay_status')|int(0) %}
+        {% if status == 0 %}All Disconnected
+        {% elif status == 1 %}Discharge Only
+        {% elif status == 2 %}Charge Only
+        {% elif status == 3 %}Both Connected
+        {% else %}Unknown
+        {% endif %}
+      availability: "{{ states('sensor.neovolt_battery_relay_status') }}"
+
+# EMS Version Normalized
+    - name: Neovolt EMS Version Normalized
+      unique_id: neovolt_ems_version_normalized
+      state: "V{{ states('sensor.neovolt_ems_version_high') }}.{{ states('sensor.neovolt_ems_version_middle') }}.{{ states('sensor.neovolt_ems_version_low') }}"
+      availability: "{{ not 'unavailable' in [ states('sensor.neovolt_ems_version_high'), states('sensor.neovolt_ems_version_middle'), states('sensor.neovolt_ems_version_low') ] }}"
+
+# System Date
+    - name: Neovolt System Date
+      unique_id: neovolt_system_date
+      state: "{{ '{:02}'.format((('0000%0x'%states('sensor.neovolt_system_time_ddhh') | int(0))[-4:])[:2]|int(base=16)) }}/{{ '{:02}'.format((('0000%0x'%states('sensor.neovolt_system_time_yymm') | int(0))[-4:])[2:]|int(base=16)) }}/20{{ '{:02}'.format((('0000%0x'%states('sensor.neovolt_system_time_yymm') | int(0))[-4:])[:2]|int(base=16)) }}"
+      availability: "{{ not 'unavailable' in [ states('sensor.neovolt_system_time_ddhh'), states('sensor.neovolt_system_time_yymm') ] }}"
+
+# System Time
+    - name: Neovolt System Time
+      unique_id: neovolt_system_time
+      state: "{{ (('0000%0x'%states('sensor.neovolt_system_time_ddhh') | int(0))[-4:])[2:]|int(base=16) }}:{{ '{:02}'.format((('0000%0x'%states('sensor.neovolt_system_time_mmss') | int(0))[-4:])[:2]|int(base=16)) }}:{{ '{:02}'.format((('0000%0x'%states('sensor.neovolt_system_time_mmss') | int(0))[-4:])[2:]|int(base=16)) }}"
+      availability: "{{ not 'unavailable' in [ states('sensor.neovolt_system_time_ddhh'), states('sensor.neovolt_system_time_mmss') ] }}"
+
+# Utility Meters for Daily Tracking
+utility_meter:
+  neovolt_daily_energy_feed_to_grid:
+    name: Neovolt Daily Energy Feed to Grid
+    unique_id: neovolt_daily_energy_feed_to_grid
+    source: sensor.neovolt_total_energy_feed_to_grid
+    cycle: daily
+
+  neovolt_daily_energy_consume_from_grid:
+    name: Neovolt Daily Energy Consume from Grid
+    unique_id: neovolt_daily_energy_consume_from_grid
+    source: sensor.neovolt_total_energy_consume_from_grid
+    cycle: daily
+
+  neovolt_daily_battery_charge:
+    name: Neovolt Daily Battery Charge
+    unique_id: neovolt_daily_battery_charge
+    source: sensor.neovolt_battery_charge_energy
+    cycle: daily
+
+  neovolt_daily_battery_discharge:
+    name: Neovolt Daily Battery Discharge
+    unique_id: neovolt_daily_battery_discharge
+    source: sensor.neovolt_battery_discharge_energy
+    cycle: daily
+
+  neovolt_daily_pv_energy:
+    name: Neovolt Daily PV Energy
+    unique_id: neovolt_daily_pv_energy
+    source: sensor.neovolt_total_pv_energy
+    cycle: daily
+
+#-------------------------------------------------------------------------------------------------------------------------------#

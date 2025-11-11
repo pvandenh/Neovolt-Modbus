@@ -1,0 +1,92 @@
+Firstly, you will need a WIFI RS485 Adapter.
+I used a "EW11A Whole kit" which I bought from here: https://www.aliexpress.com/item/32916950283.html?spm=a2g0o.order_list.order_list_main.5.560b1802ncznzE
+You will also need a ethernet cable (I had a spare short one, and simply cut it in half).
+
+You need to strip cut end wires back in order to screw them to the green block on the supplied cable.
+
+Noting the cable has lettering printed on the black plastic just above the green section.
+
+Like this:
+
+A + - B 
+
+On the cut ethernet cable, check you have the right half. You want the end with the plug like this"
+https://ibb.co/KKT5h4X
+
+You want to wire the stripped 4 ethernet cables, and connect them as
+
+
+A = Blue / white striped
++ = Orange / white striped
+- = Green / white striped
+B = Blue
+
+
+Plug the supplied black ethernet cable to the EW11A box, and the other end ethernet to the RJ485 port on the Neovolt inverter (2nd port from the bottom, you will need to remove the 4 screws holding the cover plate, and route through the bottom gland).
+
+You should see the ethernet port of the EW11A box begin the flicker etc.
+
+After a few moments, you will need to look for a new WIFI SSID. It will start with "EW11..." Should be no password that that stage, and it isn't connected to internet etc. Connect to it, accepting whatever prompts.
+Once connected, open a browser, and type 10.10.100.254 (username/password = admin/admin).
+Once you are into the Status page, select System Setting, and scroll down the Wifi Settings. Wifi mode = STA, and then hit the Scan button. Select your home wifi, and type the password. Scroll to the bottom of the page and hit Submit.
+After it is saved, remove the black ethernet cable from the EW11 for a moment, then plug it back in.
+
+Now you see the device on you home network (named as EW11 etc). Suggest assigning a set IP address to it at that stage, so it doesn't move around the DHCP pool.
+
+Now, you can type in the IP address on you PC browser, and it should open the same EW11 settings page. 
+
+Serial port settings:
+
+Baud rate = 9600
+Data Bit = 8
+Stop Bit = 1
+Parity = None
+Flow Control = Disable
+Protocol = Modbus
+
+Then press Submit to save any changes.
+
+Communication Settings :
+
+Protocol = TCP Server
+Local Port = 502
+
+Now into Home Assistant
+
+Firstly, find you secrets.yaml file, and add this 
+
+---
+
+neovolt_modbus_host_ip: 192.168.x.x  # Your EW11 adapter IP address
+neovolt_modbus_host_port: 502
+neovolt_modbus_slaveId: 85
+
+---
+
+Save change
+
+Then, in the configuration.yaml file, add this
+
+---
+homeassistant:
+  packages: !include_dir_named packages
+---
+Save change
+
+Then in that same directory, add a folder called "packages" (if you haven't already got one).
+
+Then add the neovolt.yaml to the packages directory.
+
+Then in HA, go to developer section, press Check Configuration to make sure there is no issues, then select to restart HA.
+
+Once HA has restarted, in Settings > Integrations, you should have now an integration with 100+ entities. If everything is setup right, you should see most of them populated with data etc.
+
+
+
+
+
+
+
+
+
+
