@@ -1,2 +1,3 @@
 # Neovolt-Modbus
-Sharing the Neovolt modbus setup for home assistant
+
+Noting there are 2 files, a text file to guide to the setup, and also the integration YAML.
