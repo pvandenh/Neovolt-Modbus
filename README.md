@@ -1,3 +1,4 @@
 # Neovolt-Modbus
 
-Noting there are 2 files, a text file to guide to the setup, and also the integration YAML.
+See setup file for instructions, and the neovolt.yaml file for the integration.
+Add the ByteWatt modbus parameters should you need it for future reference
