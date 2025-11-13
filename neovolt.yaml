@@ -1168,7 +1168,7 @@ modbus:
         device_class: energy
         state_class: total_increasing
         scan_interval: 60
-        scale: 0.1
+        scale: 0.01
         precision: 2
 
       - name: Neovolt System Total PV Energy
