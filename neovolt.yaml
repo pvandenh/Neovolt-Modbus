@@ -10,6 +10,7 @@
 #   Change History:
 #   1.0     2025-01-XX      Initial version based on Bytewatt protocol documentation
 #   1.1     2025-11-12      Sensor calculation fixes
+#   1.2     2025-11-13      Added missing AC-coupled PV Inverter Energy sensor (08D0H)
 #
 #################################################################################################################################
 
@@ -1157,7 +1158,31 @@ modbus:
         state_class: measurement
         scan_interval: 30
 
-# System Running Data (0x08D0-0x08D5)
+# System Running Data (0x08D0-0x08D5) - AC-COUPLED SOLAR DATA
+      - name: Neovolt PV Inverter Energy
+        unique_id: neovolt_pv_inverter_energy
+        slave: !secret neovolt_modbus_slaveId
+        address: 0x08D0
+        data_type: uint32
+        unit_of_measurement: kWh
+        device_class: energy
+        state_class: total_increasing
+        scan_interval: 60
+        scale: 0.1
+        precision: 2
+
+      - name: Neovolt System Total PV Energy
+        unique_id: neovolt_system_total_pv_energy
+        slave: !secret neovolt_modbus_slaveId
+        address: 0x08D2
+        data_type: uint32
+        unit_of_measurement: kWh
+        device_class: energy
+        state_class: total_increasing
+        scan_interval: 60
+        scale: 0.1
+        precision: 2
+
       - name: Neovolt System Fault
         unique_id: neovolt_system_fault
         slave: !secret neovolt_modbus_slaveId
@@ -1918,6 +1943,12 @@ utility_meter:
     name: Neovolt Daily PV Energy
     unique_id: neovolt_daily_pv_energy
     source: sensor.neovolt_total_pv_energy
+    cycle: daily
+
+  neovolt_daily_pv_inverter_energy:
+    name: Neovolt Daily PV Inverter Energy (AC-Coupled)
+    unique_id: neovolt_daily_pv_inverter_energy
+    source: sensor.neovolt_pv_inverter_energy
     cycle: daily
 
 #-------------------------------------------------------------------------------------------------------------------------------#
